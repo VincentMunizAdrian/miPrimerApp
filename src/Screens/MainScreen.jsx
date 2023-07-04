@@ -16,6 +16,7 @@ const MainScreen = ({taskList}) => {
   const [list, setList] = useState (taskList)
   const [input, setInput] = useState ("")
   const [modalVisible, setModalVisible] = useState(false);
+  const [taskActive, setTaskActive] = useState({})
   
   const onAddTask = () => {
     setList([
@@ -28,15 +29,23 @@ const MainScreen = ({taskList}) => {
     ])
     console.log("Se agrego una tarea");
   }
+  const onPressTask = (task) => {
+    console.log(task);
+    setTaskActive(task)
+    setModalVisible(!modalVisible)
+  }
+  
   console.log(list);
 
-  const renderItemTask  = ({item}) => {
+  const renderItemTask  = ({item, onPressTask}) => {
     return (
-      <View style={styles.task} key={item.id}>
-    <Text>
-      {item.task}
-    </Text> 
-  </View>
+      <Pressable onPress={() => onPressTask(item)}>
+        <View style={styles.task} key={item.id}>
+          <Text>
+            {item.task}
+          </Text> 
+        </View>
+      </Pressable>
     )
   }
 
@@ -60,13 +69,8 @@ const MainScreen = ({taskList}) => {
         <FlatList
           data={list}
           keyExtractor={item => item.id}
-          renderItem={renderItemTask}
+          renderItem={({item}) => renderItemTask({item, onPressTask})}
         />
-      <Pressable
-        style={[styles.button, styles.buttonOpen]}
-        onPress={() => setModalVisible(true)}>
-        <Text style={styles.textStyle}>Show Modal</Text>
-      </Pressable>
         {/* {list.map(item =>
           <View style ={styles.task} key={item.id}>
             <Text>
@@ -80,17 +84,29 @@ const MainScreen = ({taskList}) => {
         transparent={true}
         visible={modalVisible}
         onRequestClose={() => {
-          Alert.alert('Modal has been closed.');
+          // Alert.alert('Modal has been closed.');
           setModalVisible(!modalVisible);
         }}>
         <View style={styles.centeredView}>
           <View style={styles.modalView}>
-            <Text style={styles.modalText}>Hello World!</Text>
-            <Pressable
-              style={[styles.button, styles.buttonClose]}
-              onPress={() => setModalVisible(!modalVisible)}>
-              <Text style={styles.textStyle}>Hide Modal</Text>
-            </Pressable>
+            <Text style={styles.modalText}>{taskActive.task}</Text>
+            <View style={styles.buttonContainer}>
+              <Pressable
+                style={[styles.button, styles.buttonHecho]}
+                onPress={() => setModalVisible(!modalVisible)}>
+                <Text style={styles.textStyle}>Hecho</Text>
+              </Pressable>
+              <Pressable
+                style={[styles.button, styles.buttonNoLoHice]}
+                onPress={() => setModalVisible(!modalVisible)}>
+                <Text style={styles.textStyle}>No lo hice aun</Text>
+              </Pressable>
+              <Pressable
+                style={[styles.button, styles.buttonBorrar]}
+                onPress={() => setModalVisible(!modalVisible)}>
+                <Text style={styles.textStyle}>Borrar tarea</Text>
+              </Pressable>
+            </View>
           </View>
         </View>
       </Modal>
@@ -167,6 +183,11 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 5,
   },
+  buttonContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10
+  },
   button: {
     borderRadius: 20,
     padding: 10,
@@ -175,8 +196,14 @@ const styles = StyleSheet.create({
   buttonOpen: {
     backgroundColor: '#F194FF',
   },
-  buttonClose: {
-    backgroundColor: '#2196F3',
+  buttonHecho: {
+    backgroundColor: 'red',
+  },
+  buttonNoLoHice: {
+    backgroundColor: 'green',
+  },
+  buttonBorrar: {
+    backgroundColor: 'blue',
   },
   textStyle: {
     color: 'white',
