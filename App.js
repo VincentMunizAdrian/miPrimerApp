@@ -1,37 +1,43 @@
-import MainScreen from './src/Screens/MainScreen.jsx';
-
-// Se deja como ejemplo la lista inicial
-
-// const taskList = [
-//   {
-//     id: 1,
-//     task: "Regar plantas",
-//     complete: false,
-//   },
-//   {
-//     id: 2,
-//     task: "Lavar platos",
-//     complete: false,
-//   },
-//   {
-//     id: 3,
-//     task: "Limpiar el baño",
-//     complete: false,
-//   },
-//   {
-//     id: 4,
-//     task: "ir a comprar carne",
-//     complete: false,
-//   },
-//   {
-//     id: 5,
-//     task: "Comprar carbon",
-//     complete: false,
-//   },
-// ]
+import Header from './src/Components/Header.jsx';
+import { 
+  StyleSheet,
+  View
+} from 'react-native';
+import ItemListCategory from './src/Screens/ItemListCategory.jsx';
+import { useFonts } from 'expo-font';
+import Home from './src/Screens/Home.jsx';
+import { useState } from 'react';
 
 export default function App() {
+  const [categoryChoice, setCategoryChoice] = useState("")
+
+  const [fontsLoaded] = useFonts({
+    'Anton': require('./src/Assets/Fonts/Anton/Anton-Regular.ttf'),
+  });
+
+  if (!fontsLoaded) {
+    return null;
+  }
+
   return (
-      <MainScreen/>
+    <View style = {styles.container}>
+      <Header/>
+      {
+        categoryChoice ? 
+        <ItemListCategory
+          category={categoryChoice}
+          setCategory={setCategoryChoice}
+        /> : 
+        <Home
+          setCategoryChoice={setCategoryChoice}
+        />
+      }
+    </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+})
